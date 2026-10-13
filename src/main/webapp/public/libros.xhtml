@@ -1,0 +1,167 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="jakarta.faces.facelets"
+                template="./../layouts/layoutP.xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:f="jakarta.faces.core">
+
+    <ui:define name="contenido">
+
+        <h2>Libros</h2>
+
+        <h:panelGroup id="listaLibros" layout="block">
+            <!-- layout="block" hace que se renderice como un <div>. -->
+
+            <div class="cards">
+
+                <ui:repeat value="#{libroBean.libros}" var="libro">
+                    <!-- UI:REPEAT: Es como un for en JSF. 
+                    Sirve para repetir una parte del XHTML por cada elemento de una lista.
+                    "var="libro"" es la variable temporal en cada vuelta.
+                    -->
+
+                    <div class="card">
+
+                        <h:graphicImage library="img"
+                                        name="#{libro.imagen}"
+                                        styleClass="imagen-card"/>
+
+                        <h3>#{libro.titulo}</h3>
+                        <p><strong>Autor:</strong> 
+                            <!--#libro.autor.nombres} #libro.autor.apellido} -->
+                            <ui:repeat value="#{libro.autores}" var="a">
+                                #{a.nombres} #{a.apellido}<br/>
+                            </ui:repeat>
+                        </p>
+                        <p><strong>Categoria:</strong> #{libro.categoria.nombre}</p>
+                        <p><strong>Año:</strong> #{libro.year} </p>
+
+                        <h:link value="Ver" outcome="detalle">
+
+                            <f:param name="id" value="#{libro.id}"/>
+                            <!-- Sirve para enviar datos por la URL.
+                            Quedando asi: detalle.xhtml?id=5
+                            -->
+
+                        </h:link>
+
+                    </div>
+
+                </ui:repeat>
+
+            </div>
+
+        </h:panelGroup>
+
+
+    </ui:define>
+
+    <ui:define name="aside">
+
+        <div class="aside-box">
+
+            <h3>
+                <i class="fa-solid fa-magnifying-glass"></i>
+                Buscar libro por titulo
+            </h3>
+
+            <h:form>
+
+                <h:inputText
+                    value="#{libroBean.busqueda}"
+                    styleClass="input-busqueda"/>
+
+                <h:commandButton value="Buscar" action="#{libroBean.buscar}">
+                    <f:ajax execute="@form" render="listaLibros"/>
+                </h:commandButton>
+
+                <!-- Solo cambia la lista "libros" que tenemos en el bean o hace una copia
+                y de ahi muestra los que se encontraron en esa lista.
+                
+                @form => envia todo el formulario-->
+
+            </h:form>
+
+        </div>
+
+        <div class="aside-box">
+
+            <h3>
+                <i class="fa-solid fa-magnifying-glass"></i>
+                Buscar libro por autor
+            </h3>
+
+            <h:form>
+
+                <h:inputText
+                    value="#{libroBean.autorBusqueda}"
+                    styleClass="input-busqueda"/>
+
+                <h:commandButton value="Buscar" action="#{libroBean.buscarAutor()}">
+                    <f:ajax execute="@form" render="listaLibros"/>
+                </h:commandButton>
+
+            </h:form>
+
+        </div>
+
+
+        <div class="aside-box">
+
+            <h3>
+                <i class="fa-solid fa-book"></i>
+                Categorías
+            </h3>
+
+            <h:form>
+
+                <ui:repeat value="#{categoriaBean.categorias}" var="cat">
+
+                    <h:commandButton
+                        value="#{cat.nombre}"
+                        action="#{libroBean.filtrarCategoria(cat.id)}"
+                        styleClass="#{libroBean.categoriaSeleccionada eq cat.id ? 'boton-categoria categoria-activa' : 'boton-categoria'}"> 
+
+                        <f:ajax execute="@this" render="@form listaLibros"/>
+
+                        <!--@this => Envía solamente el componente seleccionado.-->
+                    </h:commandButton>
+
+                </ui:repeat>
+
+                <h:commandButton value="Ver todos" 
+                                 styleClass="boton-categoria limpiar"
+                                 action="#{libroBean.cargarLibros}">
+
+                    <f:ajax execute="@this" render="@form listaLibros"/>
+
+                </h:commandButton>
+            </h:form>
+        </div>
+
+        <div class="aside-box">
+
+            <h3>
+                <i class="fa-solid fa-circle-info"></i>
+                Información
+            </h3>
+
+            <ul class="estilo-li">
+
+                <li>Más de 100 libros disponibles.</li>
+
+                <li>Préstamos de hasta 15 días.</li>
+
+                <li>Máximo 3 libros por usuario.</li>
+
+                <li>Filtrá por categoría o buscá por título.</li>
+
+            </ul>
+
+        </div>
+
+    </ui:define>
+
+
+</ui:composition>

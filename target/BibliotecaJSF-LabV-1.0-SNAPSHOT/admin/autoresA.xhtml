@@ -1,0 +1,98 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="jakarta.faces.facelets"
+                template="./../layouts/layoutAdmin.xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:f="jakarta.faces.core">
+
+    <ui:define name="contenido">
+        <h:form id="form-autores">
+
+            <h2>Nuevo Autor</h2>
+
+            <h:messages styleClass="mensajes" infoClass="info" errorClass="error"/>
+
+            <h:panelGrid columns="2">
+
+                <h:outputLabel value="Nombre" for="nombre" />
+                <h:inputText id="nombre" 
+                             value="#{autorAdminBean.autor.nombres}" 
+                             required="true"
+                             requiredMessage="Debe ingresar el nombre"/>
+                
+                
+                <h:outputLabel value="Apellido" for="apellido" />
+                <h:inputText id="apellido" 
+                             value="#{autorAdminBean.autor.apellido}" 
+                             required="true"
+                             requiredMessage="Debe ingresar el apellido"/>
+            </h:panelGrid>
+
+            <h:commandButton
+                value="Guardar"
+                action="#{autorAdminBean.guardar}">
+
+                <f:ajax execute="@form" render="@form form-tabla-aut"/>
+
+            </h:commandButton>
+
+        </h:form>
+
+
+        
+        <h:form id="form-tabla-aut">
+
+            <h:dataTable
+                value="#{autorAdminBean.autores}"
+                var="a"
+                styleClass="tabla">
+
+                <h:column>
+                    <f:facet name="header">Id</f:facet>
+                        #{a.id}
+                </h:column>
+
+                <h:column>
+                    <f:facet name="header">Nombre</f:facet>
+                        #{a.nombres}
+                </h:column>
+                
+                <h:column>
+                    <f:facet name="header">Apellido</f:facet>
+                        #{a.apellido}
+                </h:column>
+
+
+                <h:column>
+
+                    <h:commandButton
+                        value="Editar"
+                        action="#{autorAdminBean.editar(a)}">
+
+                        <f:ajax render="@form form-autores"/>
+
+                    </h:commandButton>
+
+                </h:column>
+
+                <h:column>
+
+                    <h:commandButton
+                        value="Eliminar"
+                        action="#{autorAdminBean.eliminar(a)}"
+                         onclick="return confirm('¿Está seguro que desea desactivar este autor?');">
+                        <f:ajax render="@form form-autores"/>
+
+                    </h:commandButton>
+
+                </h:column>
+
+            </h:dataTable>
+
+        </h:form>
+
+
+    </ui:define>
+
+</ui:composition>

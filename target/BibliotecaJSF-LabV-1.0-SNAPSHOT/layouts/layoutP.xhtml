@@ -1,0 +1,376 @@
+<?xml version='1.0' encoding='UTF-8' ?> 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="jakarta.faces.facelets"
+      xmlns:h="jakarta.faces.html"
+      xmlns:f="jakarta.faces.core">
+
+    <h:head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"/>
+
+        <h:outputStylesheet library="css" name="style.css"/>
+
+        <title>Biblioteca</title>
+    </h:head>
+
+    <h:body>
+
+        <header class="header">
+
+
+            <!-- IZQUIERDA -->
+            <div class="header-left">
+
+                <h1 class="titulo">
+                    Biblioteca Central
+                </h1>
+
+
+                <nav class="nav">
+
+                    <h:link value="Inicio" outcome="/index"/>
+
+                    <h:link value="Libros" outcome="/public/libros"/>
+
+                    <h:link value="Contacto" outcome="/public/contacto"/>
+
+                </nav>
+
+
+            </div>
+
+
+
+            <!-- DERECHA -->
+            <div class="header-right">
+
+
+                <!-- carrito -->
+                <h:form id="formCarrito"
+                        rendered="#{usuarioBean.usuarioLogueado != null}">
+
+
+                    <!-- BOTON CARRITO -->
+                    <h:panelGroup id="carritoBoton">
+
+
+                        <h:commandLink
+                            action="#{prestamoBean.mostrarCarrito}"
+                            styleClass="enlace botonTransparente">
+
+
+                            <i class="fa-solid fa-cart-shopping"></i>
+
+                            (#{prestamoBean.cantidad})
+
+
+                            <f:ajax
+                                execute="@this"
+                                render="@form"/>
+
+
+                        </h:commandLink>
+
+
+                    </h:panelGroup>
+
+
+
+
+
+                    <!-- ZONA CARRITO -->
+                    <h:panelGroup id="carritoZona">
+
+
+                        <h:panelGroup
+                            rendered="#{prestamoBean.carritoVisible}"
+                            styleClass="carrito-popup">
+
+
+
+                            <div class="titulo-carrito">
+
+
+                                <h3>
+                                    Mi préstamo
+                                </h3>
+
+
+
+                                <h:commandLink
+                                    styleClass="btn-cerrar"
+                                    action="#{prestamoBean.cerrarCarrito}">
+
+
+                                    <i class="fa-solid fa-xmark"></i>
+
+
+                                    <f:ajax
+                                        execute="@this"
+                                        render="@form :formDetalle:panelPrestamo "/>
+
+
+                                </h:commandLink>
+
+
+                            </div>
+
+
+
+
+
+                            <p class="info-carrito">
+
+                                Máx. permitido: 3 libros
+
+                            </p>
+
+
+
+
+
+
+                            <ui:repeat
+                                value="#{prestamoBean.carrito}"
+                                var="libro">
+
+
+
+                                <div class="info-libro">
+
+
+                                    <span>
+                                        #{libro.titulo}
+                                    </span>
+
+
+
+
+                                    <h:commandLink
+                                        styleClass="btn-eliminar"
+                                        action="#{prestamoBean.quitarLibro(libro)}">
+
+
+
+                                        <i class="fa-solid fa-trash"></i>
+
+
+
+
+                                        <f:ajax
+                                            execute="@this"
+                                            render="@form :formDetalle:panelPrestamo"/>
+
+
+
+                                    </h:commandLink>
+
+
+
+                                </div>
+
+
+
+                            </ui:repeat>
+
+
+
+
+
+
+
+                            <h:commandButton
+                                value="Solicitar préstamo"
+                                action="#{prestamoBean.solicitarPrestamo}">
+
+
+
+                                <f:ajax
+                                    execute="@this"
+                                    render="@form"/>
+
+
+
+                            </h:commandButton>
+
+
+
+
+
+
+
+                            <!-- NO ES SOCIO -->
+
+                            <h:panelGroup
+                                rendered="#{prestamoBean.mostrarRegistroSocio}">
+
+
+
+                                <div class="popOutSerSocio">
+
+
+
+                                    <p class="mensaje-socio">
+
+                                        Debe ser socio para solicitar préstamos
+
+                                    </p>
+
+
+
+
+                                    <h:link
+                                        value="Registrarme como socio"
+                                        outcome="/public/registroSocio"/>
+
+
+
+                                </div>
+
+
+
+                            </h:panelGroup>
+
+
+
+
+
+                        </h:panelGroup>
+
+
+
+                    </h:panelGroup>
+
+
+
+
+                </h:form>
+
+                <!-- ADMIN -->
+                <h:panelGroup rendered="#{usuarioBean.esAdmin()}">
+
+                    <h:link styleClass="enlace boton2oscuro"
+                            value="Administración"
+                            outcome="/admin/prestamosA"/>
+
+                </h:panelGroup>
+
+                <!-- USUARIO LOGUEADO -->
+                <h:panelGroup rendered="#{usuarioBean.usuarioLogueado != null}">
+
+                    <h:form>
+
+                        <h:commandLink
+                            styleClass="enlace boton1claro"
+                            value="Cerrar sesión"
+                            action="#{usuarioBean.logout}"/>
+
+                    </h:form>
+
+                </h:panelGroup>
+
+                <!-- INVITADO -->
+                <h:panelGroup rendered="#{usuarioBean.usuarioLogueado == null}">
+
+                    <h:link
+                        styleClass="enlace botonTransparente"
+                        value="Iniciar sesión"
+                        outcome="/auth/login"/>
+
+                    <h:link
+                        styleClass="enlace boton1claro"
+                        value="Registrarse"
+                        outcome="/auth/registroUsuario"/>
+
+                </h:panelGroup>
+
+                
+
+
+            </div>
+
+
+        </header>
+
+
+        <main class="contenedor">
+
+            <section>
+                <ui:insert name="contenido"/>
+            </section>
+
+            <aside>
+                <ui:insert name="aside"/>
+            </aside>
+
+        </main>
+
+
+        <footer class="footer">
+
+            <div class="footer-info">
+                <p>Dirección: Clodomira</p>
+                <p>WIERNA TIMOTEO 2026</p>
+            </div>
+
+        </footer>
+
+    </h:body>
+
+</html>
+
+
+
+<!-- 
+
+                <h:form>
+
+                    <h:commandLink
+                        value="🛒 Carrito ({prestamoBean.cantidad})"
+                        action="{prestamoBean.mostrarCarrito}"/>
+
+
+                    <h:panelGroup 
+                        rendered="{prestamoBean.carritoVisible}"
+                        styleClass="carrito-popup">
+
+
+                        <h3>
+                            Mi préstamo
+
+                            <h:commandLink
+                                value=" X "
+                                action="{prestamoBean.cerrarCarrito}"/>
+                        </h3>
+
+
+                        <ui:repeat 
+                            value="{prestamoBean.carrito}" 
+                            var="libro">
+
+
+                            <p>
+                                {libro.titulo}
+
+                                <h:commandLink
+                                    value=" X "
+                                    action="{prestamoBean.quitarLibro(libro)}"/>
+
+                            </p>
+
+
+                        </ui:repeat>
+
+
+                        <h:commandButton
+                            value="Confirmar préstamo"
+                            action="{prestamoBean.confirmar}"/>
+
+
+                    </h:panelGroup>
+
+
+                </h:form>
+-->

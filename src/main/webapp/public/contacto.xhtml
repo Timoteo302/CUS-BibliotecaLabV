@@ -1,0 +1,173 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="jakarta.faces.facelets"
+                template="./../layouts/layoutP.xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:f="jakarta.faces.core">
+
+    <ui:define name="contenido">
+
+        <div class="form-card">
+
+
+
+            <h2>Contacto</h2>
+
+            <h:messages id="mensajes" styleClass="mensajes" errorClass="error"
+                        infoClass="info"/>
+
+
+            <h:panelGroup id="formulario">
+
+                <h:form>
+
+                    <h:outputLabel for="nombre" value="Nombre:"/>
+                    <h:inputText id="nombre"
+                                 value="#{consultaBean.consulta.nombreCompleto}"
+                                 required="true"
+                                 requiredMessage="Debe ingresar el nombre"/>
+
+
+                    <h:outputLabel for="email" value="Email:"/>
+                    <h:inputText id="email"
+                                 value="#{consultaBean.consulta.email}"
+                                 required="true"
+                                 requiredMessage="Debe ingresar el email"/>
+
+
+                    <h:outputLabel for="consulta" value="Consulta:"/>
+                    <h:inputTextarea id="consulta"
+                                     value="#{consultaBean.consulta.consulta}"
+                                     required="true"
+                                     requiredMessage="Debe escribir una consulta"/>
+
+
+                    <h:commandButton value="Enviar"
+                                     action="#{consultaBean.guardar}">
+
+                        <f:ajax 
+                            execute="@form"
+                            render="formulario mensajes"/>
+
+                    </h:commandButton>
+
+
+                </h:form>
+
+            </h:panelGroup>
+
+        </div>
+
+        <div class="faq">
+
+            <h2>Preguntas frecuentes</h2>
+
+            <h3>¿Cómo pido un libro?</h3>
+            <p>
+                Desde el detalle del libro podrás solicitar un préstamo.
+            </p>
+
+
+            <h3>¿Cuánto tiempo puedo tenerlo?</h3>
+            <p>
+                Depende de la disponibilidad y las condiciones del préstamo.
+            </p>
+
+
+            <h3>¿Necesito registrarme?</h3>
+            <p>
+                Sí, para realizar préstamos necesitas una cuenta.
+            </p>
+
+        </div>
+
+    </ui:define>
+
+
+    <ui:define name="aside">
+
+        <div class="aside-box">
+
+            <h3>
+                <i class="fa-solid fa-address-book"></i>
+                Contacto
+            </h3>
+
+            <p>
+                ¿Tenés alguna consulta o sugerencia?
+                Nuestro equipo está disponible para ayudarte.
+            </p>
+
+            <div class="info-contacto">
+
+                <h4>
+                    <i class="fa-solid fa-clock"></i>
+                    Horarios
+                </h4>
+
+                <p>Lunes a Viernes</p>
+                <p>08:00 - 20:00 hs</p>
+
+            </div>
+
+            <div class="info-contacto">
+
+                <h4>
+                    <i class="fa-solid fa-phone"></i>
+                    Teléfono
+                </h4>
+
+                <p>+54 385 1234567</p>
+
+            </div>
+
+            <div class="info-contacto">
+
+                <h4>
+                    <i class="fa-solid fa-envelope"></i>
+                    Correo
+                </h4>
+
+                <p>biblioteca@ejemplo.com</p>
+
+            </div>
+
+            <div class="info-contacto">
+
+                <h4>
+                    <i class="fa-solid fa-location-dot"></i>
+                    Dirección
+                </h4>
+
+                <p>Clodomira, Santiago del Estero</p>
+
+            </div>
+
+        </div>
+
+    </ui:define>
+
+</ui:composition>
+
+
+<!-- En JSF el atributo render de <f:ajax> indica qué componentes 
+de la página se deben actualizar después de ejecutar una acción.
+
+Por ejemplo:    render="formulario mensajes"
+Actualiza 2 componentes:
+- formulario:
+  Vuelve a dibujar el contenido del panelGroup.
+  Si el Bean crea un objeto nuevo (ej: consulta = new Consulta()), 
+los inputs quedan vacíos.
+
+- mensajes:
+  Actualiza el <h:messages> para mostrar los FacesMessage 
+(errores o mensajes de éxito).
+
+Aunque h:messages esté fuera del <h:form>, se puede actualizar 
+porque tiene su propio id y JSF lo busca por ese identificador.
+
+Si se usa solo:    render="@form"
+solo se actualiza el formulario actual y los mensajes que 
+estén fuera no se refrescan. -->

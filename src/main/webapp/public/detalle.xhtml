@@ -1,0 +1,204 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="jakarta.faces.facelets"
+                template="./../layouts/layoutP.xhtml"
+                xmlns:f="jakarta.faces.core"
+                xmlns:h="jakarta.faces.html">
+
+    <f:metadata>
+
+        <!-- Cosas que pasan antes de mostrar la pagina.
+        Cuando apretamos en un libro, gracias al param que colocamos en "libros.xhtml"
+        en el navegador va: "detalle.xhtml?id=5" 
+        
+        1.Primero entra en el <f:viewParam /> y le dice:
+        "Buscá el parámetro que viene en la URL llamado "id" y guardalo en la variable idLibro del bean"
+        
+        2. Luego el <f:viewActio >/ y le dice:
+        "Ahora que ya tengo el "id", ejecutá este método "cargarLibro()""
+        
+        Entonces en el bean, en la variable "libro" se guarda porque se hizo una busqueda
+        en la BD y luego ya podemos usarla aqui en el xhtml.
+        -->
+
+        <f:viewParam name="id" value="#{libroBean.idLibro}" />
+
+        <f:viewAction action="#{libroBean.cargarLibro}" />
+
+    </f:metadata>
+
+
+    <ui:define name="contenido">
+
+        <!-- Si existe el libro, muestra todo el detalle -->
+        <h:panelGroup rendered="#{libroBean.libroEncontrado}">
+
+            <div class="detalle-libro">
+
+
+                <h:graphicImage 
+                    library="img"
+                    name="#{libroBean.libro.imagen}"
+                    styleClass="imagen-detalle"/>
+
+                <div>
+
+                    <h2>#{libroBean.libro.titulo}</h2>
+                    <p><strong>Autor/es:</strong> 
+                        <!-- #libroBean.libro.autor.nombres}  #libroBean.libro.autor.apellido} --> 
+                        <ui:repeat value="#{libroBean.libro.autores}" var="a">
+                            #{a.nombres} #{a.apellido}<br/>
+                        </ui:repeat>
+                    </p>
+                    <p><strong>Año: </strong> #{libroBean.libro.year}</p>
+                    <p><strong>Edicion: </strong> #{libroBean.libro.edicion}</p>
+                    <p><strong>Editorial: </strong> #{libroBean.libro.editorial}</p>
+                    <p><strong>Copias disp: </strong> #{libroBean.libro.disponibles}</p>
+
+                    <p><strong>Descripcion: </strong> #{libroBean.libro.descripcion} </p>
+
+
+                    <h:link value="Volver a listado" outcome="libros"/>
+                </div>
+
+
+
+            </div>
+
+        </h:panelGroup>
+
+
+
+        <!-- Si NO existe el libro -->
+        <h:panelGroup rendered="#{!libroBean.libroEncontrado}">
+
+            <h2>El libro no existe</h2>
+
+            <h:link value="Volver a listado" outcome="libros"/>
+
+        </h:panelGroup>
+
+
+    </ui:define>
+
+    <ui:define name="aside">
+
+
+        <div class="aside-box">
+
+
+            <h3>
+                <i class="fa-solid fa-circle-info"></i>
+                Información
+            </h3>
+
+
+
+            <div class="info-contacto">
+
+
+                <h4>
+                    <i class="fa-solid fa-box"></i>
+                    Disponibilidad
+                </h4>
+
+
+                <p>
+                    Copias disponibles:
+                    #{libroBean.libro.disponibles}
+                </p>
+
+
+                <h:outputText
+                    value="Sin stock"
+                    rendered="#{libroBean.libro.disponibles == 0}"/>
+
+
+            </div>
+
+
+
+
+
+            <div class="info-contacto">
+
+
+                <h4>
+                    <i class="fa-solid fa-cart-plus"></i>
+                    Préstamo
+                </h4>
+
+
+
+                <h:form id="formDetalle">
+
+
+                    <h:panelGroup id="panelPrestamo" >
+
+                        <h:commandButton
+                            action="#{prestamoBean.agregarLibro(libroBean.libro)}"
+                            rendered="#{
+                            usuarioBean.usuarioLogueado != null
+                                and libroBean.libro.disponibles > 0 
+                                and !prestamoBean.estaEnCarrito(libroBean.libro)}"
+                            value="Agregar al carrito"
+                            styleClass="boton-agregar">
+
+
+                            <f:ajax
+                                execute="@this"
+                                render="@form :formCarrito:carritoBoton"/>
+
+                        </h:commandButton>
+
+
+
+
+                        <h:commandButton
+                            rendered="#{prestamoBean.estaEnCarrito(libroBean.libro)}"
+                            value="En el carrito"
+                            disabled="true"
+                            styleClass="boton-agregado"/>
+
+
+
+                        <h:messages
+                            styleClass="mensajes"
+                            infoClass="info"/>
+
+                    </h:panelGroup>
+
+
+                </h:form>
+
+
+            </div>
+
+
+
+
+            <div class="info-contacto">
+
+
+                <h4>
+                    <i class="fa-solid fa-book-open"></i>
+                    Descripción
+                </h4>
+
+
+                <p>
+                    #{libroBean.libro.descripcion}
+                </p>
+
+
+            </div>
+
+
+
+        </div>
+
+
+    </ui:define>
+
+</ui:composition>

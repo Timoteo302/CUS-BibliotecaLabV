@@ -1,0 +1,255 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="jakarta.faces.facelets"
+                template="./../layouts/layoutAdmin.xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:f="jakarta.faces.core">
+
+    <ui:define name="contenido">
+        <h:form id="form-libros">
+
+            <h2>Nuevo libro</h2>
+
+            <h:messages styleClass="mensajes" infoClass="info" errorClass="error"/>
+
+            <h:panelGrid columns="2">
+
+                <h:outputLabel value="Título" for="titulo" />
+                <h:inputText id="titulo" 
+                             value="#{libroAdminBean.libro.titulo}" 
+                             required="true"
+                             requiredMessage="Debe ingresar el titulo"/>
+
+                <h:outputLabel value="Año" for="year" />
+                <h:inputText id="year" value="#{libroAdminBean.libro.year}" required="true" requiredMessage="Debe ingresar el año"/>
+
+                <h:outputLabel value="Edición" for="edicion" />
+                <h:inputText id="edicion" value="#{libroAdminBean.libro.edicion}" required="true" requiredMessage="Debe ingresar la edicion"/>
+
+
+                <h:outputLabel value="Editorial" for="editorial" />
+                <h:inputText id="editorial" value="#{libroAdminBean.libro.editorial}" required="true" requiredMessage="Debe ingresar el editorial"/>
+
+
+                <h:outputLabel value="Disponibles" for="disponibles" />
+                <h:inputText id="disponibles" value="#{libroAdminBean.libro.disponibles}" required="true" requiredMessage="Debe ingresar la cantidad disponible"/>
+
+
+                <h:outputLabel value="Imagen" for="imagen" />
+                <h:inputText id="imagen" value="#{libroAdminBean.libro.imagen}" required="true" requiredMessage="Debe ingresar la imagen"/>
+
+
+                <h:outputLabel value="Descripción" for="descripcion" />
+                <h:inputTextarea id="descripcion"
+                                 value="#{libroAdminBean.libro.descripcion}"
+                                 rows="4"
+                                 cols="40"
+                                 required="true"
+                                 requiredMessage="Debe ingresar la descripcion"/>
+
+
+                <h:outputLabel value="Autor" for="autores" />
+                <!--<h:selectOneMenu id="autores"
+                                 value="#libroAdminBean.libro.autor}"
+                                 required="true"
+                                 requiredMessage="Debe seleccionar un autor">
+
+
+                    <f:selectItem
+                        itemLabel="Seleccione autor"
+                        noSelectionOption="true"/>
+
+                    <f:selectItems
+                        value="#libroAdminBean.autores}"
+                        var="a"
+                        itemValue="#a}"
+                        itemLabel="#a.apellido} #a.nombres}"/>
+
+
+                    <f:converter converterId="autorConverter"/>
+                </h:selectOneMenu> -->
+                <!--NUEVO 2 AUTORES -->
+                <h:panelGroup>
+                    <h:selectManyCheckbox styleClass="autores-checkbox"
+                                          id="autores"
+                                          value="#{libroAdminBean.autoresSeleccionados}"
+                                          layout="pageDirection"
+                                          required="true"
+                                          requiredMessage="Debe seleccionar al menos un autor">
+
+
+                        <f:selectItems
+                            value="#{libroAdminBean.autores}"
+                            var="a"
+                            itemValue="#{a}"
+                            itemLabel="#{a.apellido} #{a.nombres}"/>
+                        <f:converter converterId="autorConverter"/>  
+
+                    </h:selectManyCheckbox>
+                </h:panelGroup>
+
+
+            </h:panelGrid>
+
+
+            <h:panelGrid columns="2">
+                <h:outputLabel value="Categoría" for="categorias" />
+                <h:selectOneMenu id="categorias"
+                                 value="#{libroAdminBean.libro.categoria}"
+                                 required="true"
+                                 requiredMessage="Debe seleccionar una categoría">
+
+                    <f:selectItem
+                        itemLabel="Seleccione categoría"
+                        noSelectionOption="true"/>
+
+                    <f:selectItems
+                        value="#{libroAdminBean.categorias}"
+                        var="c"
+                        itemValue="#{c}"
+                        itemLabel="#{c.nombre}"/>
+
+                    <f:converter converterId="categoriaConverter"/>
+
+                </h:selectOneMenu>
+            </h:panelGrid>
+
+
+            <h:commandButton
+                value="Guardar"
+                action="#{libroAdminBean.guardar}">
+
+                <f:ajax execute="@form" render="@form form-tabla-libros"/>
+
+            </h:commandButton>
+
+        </h:form>
+
+
+
+        <h:form id="form-tabla-libros">
+
+            <h3 class="titulo-tabla">Libros activos</h3>
+
+            <h:dataTable
+                value="#{libroAdminBean.libros}"
+                var="l"
+                styleClass="tabla">
+
+                <h:column>
+                    <f:facet name="header">Título</f:facet>
+                        #{l.titulo}
+                </h:column>
+
+                <!--<h:column>
+                    <f:facet name="header">Autor</f:facet>
+                    #l.autor.apellido}
+                </h:column> -->
+                <h:column>
+                    <f:facet name="header">Autor</f:facet>
+
+                    <ui:repeat value="#{l.autores}" var="a">
+                        #{a.apellido} #{a.nombres}<br/>
+                    </ui:repeat>
+                </h:column>
+
+                <h:column>
+                    <f:facet name="header">Categoría</f:facet>
+                        #{l.categoria.nombre}
+                </h:column>
+
+                <h:column>
+                    <f:facet name="header">Disponibles</f:facet>
+                        #{l.disponibles}
+                </h:column>
+
+                <h:column>
+                    <f:facet name="header">Estado</f:facet>
+                        #{l.activo}
+                </h:column>
+
+                <h:column>
+
+                    <h:commandButton
+                        value="Editar"
+                        action="#{libroAdminBean.editar(l)}">
+
+                        <f:ajax render="@form form-libros"/>
+
+                    </h:commandButton>
+
+                </h:column>
+
+                <h:column>
+
+                    <h:commandButton
+                        value="Desactivar"
+                        action="#{libroAdminBean.eliminar(l)}"
+                        onclick="return confirm('¿Está seguro que desea desactivar este libro?');">
+
+                        <f:ajax render="@form form-libros"/>
+
+                    </h:commandButton>
+
+                </h:column>
+
+            </h:dataTable>
+
+
+
+            <h3 class="titulo-tabla">Libros inactivos</h3>
+
+            <h:dataTable
+                value="#{libroAdminBean.librosInactivos}"
+                var="l"
+                styleClass="tabla">
+
+                <h:column>
+                    <f:facet name="header">Título</f:facet>
+                        #{l.titulo}
+                </h:column>
+
+                <!--<h:column>
+                    <f:facet name="header">Autor</f:facet>
+                    #l.autor.apellido} 
+                </h:column> -->
+
+                <h:column>
+                    <ui:repeat value="#{l.autores}" var="a">
+                        #{a.apellido} #{a.nombres}<br/>
+                    </ui:repeat>
+                </h:column>
+
+                <h:column>
+                    <f:facet name="header">Categoría</f:facet>
+                        #{l.categoria.nombre}
+                </h:column>
+
+                <h:column>
+                    <f:facet name="header">Disponibles</f:facet>
+                        #{l.disponibles}
+                </h:column>
+
+                <h:column>
+                    <f:facet name="header">Estado</f:facet>
+                        #{l.activo}
+                </h:column>
+
+                <h:column>
+                    <h:commandButton
+                        value="Activar"
+                        action="#{libroAdminBean.activar(l)}">
+
+                        <f:ajax render="@form form-libros"/>
+                    </h:commandButton>
+                </h:column>
+
+            </h:dataTable>
+
+        </h:form>
+
+
+    </ui:define>
+
+</ui:composition>

@@ -1,0 +1,87 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="jakarta.faces.facelets"
+                template="./../layouts/layoutAdmin.xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:f="jakarta.faces.core">
+
+    <ui:define name="contenido">
+        <h:form id="form-cat">
+
+            <h2>Nueva Categoria</h2>
+
+            <h:messages styleClass="mensajes" infoClass="info" errorClass="error"/>
+
+            <h:panelGrid columns="2">
+
+                <h:outputLabel value="Nombre" for="nombre" />
+                <h:inputText id="nombre" 
+                             value="#{categoriaAdminBean.categoria.nombre}" 
+                             required="true"
+                             requiredMessage="Debe ingresar el nombre"/>
+            </h:panelGrid>
+
+            <h:commandButton
+                value="Guardar"
+                action="#{categoriaAdminBean.guardar}">
+
+                <f:ajax execute="@form" render="@form form-tabla-cat"/>
+
+            </h:commandButton>
+
+        </h:form>
+
+
+        
+        <h:form id="form-tabla-cat">
+
+            <h:dataTable
+                value="#{categoriaAdminBean.categorias}"
+                var="c"
+                styleClass="tabla">
+
+                <h:column>
+                    <f:facet name="header">Id</f:facet>
+                        #{c.id}
+                </h:column>
+
+                <h:column>
+                    <f:facet name="header">Nombre</f:facet>
+                        #{c.nombre}
+                </h:column>
+
+
+                <h:column>
+
+                    <h:commandButton
+                        value="Editar"
+                        action="#{categoriaAdminBean.editar(c)}">
+
+                        <f:ajax render="@form form-cat"/>
+
+                    </h:commandButton>
+
+                </h:column>
+
+                <h:column>
+
+                    <h:commandButton
+                        value="Eliminar"
+                        action="#{categoriaAdminBean.eliminar(c)}"
+                        onclick="return confirm('¿Está seguro que desea desactivar esta categoria?');">
+
+                        <f:ajax render="@form form-cat"/>
+
+                    </h:commandButton>
+
+                </h:column>
+
+            </h:dataTable>
+
+        </h:form>
+
+
+    </ui:define>
+
+</ui:composition>

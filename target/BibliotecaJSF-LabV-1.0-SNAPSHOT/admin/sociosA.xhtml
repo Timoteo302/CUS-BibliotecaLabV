@@ -1,0 +1,190 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="jakarta.faces.facelets"
+                template="./../layouts/layoutAdmin.xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:f="jakarta.faces.core">
+
+    <ui:define name="contenido">
+
+        <h:form id="form-socios">
+
+            <h2>Nuevo Socio</h2>
+
+            <h:messages styleClass="mensajes" infoClass="info" errorClass="error"/>
+
+            <h:panelGrid columns="2">
+
+                <h:outputLabel value="Nombre" for="nombre" />
+                <h:inputText id="nombre" 
+                             value="#{socioAdminBean.socio.nombres}" 
+                             required="true"
+                             requiredMessage="Debe ingresar el nombre"/>
+
+
+                <h:outputLabel value="Apellido" for="apellido" />
+                <h:inputText id="apellido" 
+                             value="#{socioAdminBean.socio.apellido}" 
+                             required="true"
+                             requiredMessage="Debe ingresar el apellido"/>
+
+                <h:outputLabel value="Direccion" for="direccion" />
+                <h:inputText id="direccion" 
+                             value="#{socioAdminBean.socio.direccion}" 
+                             required="true"
+                             requiredMessage="Debe ingresar la direccion"/>
+
+
+                <h:outputLabel value="Telefono" for="telefono" />
+                <h:inputText id="telefono" 
+                             value="#{socioAdminBean.socio.telefono}" 
+                             required="true"
+                             requiredMessage="Debe ingresar el telefono"/>
+
+
+                <h:outputLabel value="Usuario" />
+                <h:selectOneMenu value="#{socioAdminBean.usuarioSeleccionado}"
+                                 required="true"
+                                 requiredMessage="Debe seleccionar un usuario">
+
+                    <f:selectItem 
+                        itemLabel="Seleccione usuario"
+                        itemValue="#{null}" />
+
+                    <f:selectItems
+                        value="#{socioAdminBean.usuarios}"
+                        var="u"
+                        itemLabel="#{u.usuario}"
+                        itemValue="#{u}" />
+
+                </h:selectOneMenu>
+            </h:panelGrid>
+
+            <h:commandButton
+                value="Guardar"
+                action="#{socioAdminBean.guardar}">
+
+                <f:ajax execute="@form" render="@form form-tabla-soc"/>
+
+            </h:commandButton>
+
+        </h:form>
+
+        <!-- SOCIOS MOROSOS -->
+
+        <h:form id="form-morosos">
+
+            <h2>Socios morosos</h2>
+
+
+            <h:commandButton
+                value="Ver morosos"
+                action="#{socioAdminBean.verMorosos}">
+
+
+                <f:ajax execute="@this" render="form-morosos"/>
+
+            </h:commandButton>
+
+
+
+            <h:dataTable
+                value="#{socioAdminBean.sociosMorosos}"
+                var="s"
+                styleClass="tabla">
+
+
+                <h:column>
+
+                    <f:facet name="header">
+                        DNI
+                    </f:facet>
+
+                    #{s.dni}
+
+                </h:column>
+
+
+                <h:column>
+
+                    <f:facet name="header">
+                        Nombre
+                    </f:facet>
+
+                    #{s.nombres}
+
+                </h:column>
+
+
+                <h:column>
+
+                    <f:facet name="header">
+                        Apellido
+                    </f:facet>
+
+                    #{s.apellido}
+
+                </h:column>
+
+
+            </h:dataTable>
+
+
+        </h:form>
+        <!-- FIN SOCIOS MOROSOS -->
+
+        <h:form id="form-tabla-soc">
+
+            <h:dataTable
+                value="#{socioAdminBean.socios}"
+                var="s"
+                styleClass="tabla">
+
+                <h:column>
+                    <f:facet name="header">Id</f:facet>
+                        #{s.id}
+                </h:column>
+
+                <h:column>
+                    <f:facet name="header">Nombre</f:facet>
+                        #{s.nombres}
+                </h:column>
+
+                <h:column>
+                    <f:facet name="header">Apellido</f:facet>
+                        #{s.apellido}
+                </h:column>
+
+                <h:column>
+                    <f:facet name="header">Direccion</f:facet>
+                        #{s.direccion}
+                </h:column>
+
+                <h:column>
+                    <f:facet name="header">Telefono</f:facet>
+                        #{s.telefono}
+                </h:column>
+
+
+                <h:column>
+
+                    <h:commandButton
+                        value="Editar"
+                        action="#{socioAdminBean.editar(s)}">
+
+                        <f:ajax render="@form form-socios"/>
+
+                    </h:commandButton>
+
+                </h:column>
+
+
+            </h:dataTable>
+
+        </h:form>
+
+
+    </ui:define>
+
+</ui:composition>

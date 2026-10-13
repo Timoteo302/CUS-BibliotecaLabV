@@ -1,0 +1,72 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="jakarta.faces.facelets"
+                template="./../layouts/layoutLogin.xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:f="jakarta.faces.core">
+
+    <ui:define name="contenido">
+
+
+        <div class="form-card">
+            <h2>
+                <i class="fa-solid fa-user-plus"></i>
+                Crear cuenta
+            </h2>
+
+            <p class="subtitulo-form">
+                Regístrese para acceder al catálogo y solicitar préstamos.
+            </p>
+
+            <h:form>
+
+                <h:messages id="mensajes" styleClass="mensajes" errorClass="error"
+                            infoClass="info"/>
+
+                <h:outputLabel for="nombre" value="Nombre:"/>
+                <h:inputText id="nombre"
+                             value="#{usuarioBean.usuario.nombre}"
+                             required="true"
+                             requiredMessage="Debe ingresar el nombre"/>
+
+                <h:outputLabel for="usuario" value="Usuario:"/>
+                <h:inputText id="usuario"
+                             value="#{usuarioBean.usuario.usuario}"
+                             required="true"
+                             requiredMessage="Debe ingresar el usuario"/>
+
+
+                <h:outputLabel for="password" value="Contraseña:"/>
+                <h:inputSecret id="password"
+                               value="#{usuarioBean.usuario.password}"
+                               required="true"
+                               requiredMessage="Debe ingresar el email"/>
+
+
+                <h:commandButton value="Registrarme"
+                                 action="#{usuarioBean.registrar}">
+
+                    <f:ajax 
+                        execute="@form"
+                        render="@form mensajes"/>
+
+                </h:commandButton>
+
+
+            </h:form>
+
+            <h:link value="← Volver al inicio de sesión"
+                    outcome="login"/>
+
+            <h:link
+                value="Continuar como invitado"
+                outcome="/index"
+                styleClass="enlace botonTransparente2"/>
+            
+        </div>
+
+
+    </ui:define>
+
+</ui:composition>

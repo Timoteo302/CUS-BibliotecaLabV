@@ -1,0 +1,158 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="jakarta.faces.facelets"
+                template="/layouts/layoutP.xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:f="jakarta.faces.core">
+
+
+    <ui:define name="contenido">
+
+        <div class="bloque-index">
+
+            <h2>Libros populares</h2>
+
+            <div class="cards">
+
+                <ui:repeat value="#{libroBean.destacados}" var="libro">
+
+                    <div class="card">
+
+                        <h:graphicImage library="img"
+                                        name="#{libro.imagen}"
+                                        styleClass="imagen-card"/>
+
+                        <h3>#{libro.titulo}</h3>
+
+                        <p>
+                            <!--#libro.autor.nombres}
+                            #libro.autor.apellido} -->
+
+                            <!-- NUEVO 2 AUTOR --> 
+                            <ui:repeat value="#{libro.autores}" var="a">
+                                #{a.nombres} #{a.apellido}<br/>
+                            </ui:repeat>
+                            
+                        </p>
+
+                        <h:link value="Ver" outcome="/public/detalle">
+                            <f:param name="id" value="#{libro.id}"/>
+                        </h:link>
+
+                    </div>
+
+                </ui:repeat>
+
+            </div>
+
+        </div>
+
+
+        <div class="info-index">
+
+            <div class="info-card">
+
+                <i class="fa-solid fa-book-open"></i>
+
+                <div>
+                    <h3>Catálogo actualizado</h3>
+                    <p>
+                        Explora nuestra colección y encuentra libros
+                        de diferentes categorías.
+                    </p>
+                </div>
+
+            </div>
+
+
+            <div class="info-card">
+
+                <i class="fa-solid fa-user-group"></i>
+
+                <div>
+                    <h3>Comunidad</h3>
+                    <p>
+                        Los socios pueden solicitar préstamos
+                        y administrar sus libros.
+                    </p>
+                </div>
+
+            </div>
+
+
+        </div>
+
+    </ui:define>
+
+
+    <ui:define name="aside">
+
+        <div class="aside-box">
+
+            <h3>
+                <i class="fa-solid fa-circle-info"></i>
+                Información útil
+            </h3>
+
+            <ul class="estilo-li">
+
+                <li>Préstamo máximo: 3 libros.</li>
+
+                <li>Duración del préstamo: 7 días.</li>
+
+                <li>Renovación disponible antes del vencimiento.</li>
+
+                <li>Los socios tienen acceso completo al catálogo.</li>
+
+            </ul>
+
+        </div>
+
+
+        <div class="aside-box">
+
+            <h3>
+                <i class="fa-solid fa-clock"></i>
+                Horarios
+            </h3>
+
+            <p>Lunes a Viernes</p>
+
+            <p>08:00 - 20:00 hs</p>
+
+        </div>
+
+
+        <div class="aside-box">
+
+            <h3>
+                <i class="fa-solid fa-share-nodes"></i>
+                Redes Sociales
+            </h3>
+
+            <div class="redes">
+
+                <a href="#">
+                    <i class="fa-brands fa-facebook-f"></i>
+                    Facebook
+                </a>
+
+                <a href="#">
+                    <i class="fa-brands fa-instagram"></i>
+                    Instagram
+                </a>
+
+                <a href="#">
+                    <i class="fa-brands fa-youtube"></i>
+                    YouTube
+                </a>
+
+            </div>
+
+        </div>
+
+    </ui:define>
+
+
+</ui:composition>

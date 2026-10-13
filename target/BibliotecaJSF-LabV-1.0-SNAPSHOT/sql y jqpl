@@ -1,0 +1,352 @@
+
+============ Crear tabla con ID automático
+
+CREATE TABLE alumnos (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(50),
+    dni INT
+);
+
+========= Agregar una columna
+ALTER TABLE alumnos
+ADD telefono VARCHAR(20);
+
+=============Modificar una columna
+
+Cambiar tamaño:
+
+ALTER TABLE alumnos
+MODIFY nombre VARCHAR(100);
+
+Cambiar nombre:
+
+ALTER TABLE alumnos
+RENAME COLUMN nombre TO apellido;
+
+======== Borrar una columna
+ALTER TABLE alumnos
+DROP COLUMN telefono;
+
+
+===== Buscar parecido (LIKE)
+SELECT *
+FROM alumnos
+WHERE nombre LIKE '%tim%';
+
+=========== Ordenar resultados
+Menor a mayor:
+SELECT *
+FROM alumnos
+ORDER BY edad ASC;
+
+(menor a mayor DESC)
+
+=========== Actualizar datos
+UPDATE alumnos
+SET edad = 25
+WHERE id = 1;
+
+
+===== Borrar datos
+DELETE FROM alumnos
+WHERE id = 1;
+
+
+========== Crear FK (clave foránea)
+
+Ejemplo: Tabla cursos:
+CREATE TABLE cursos(
+    id INT PRIMARY KEY,
+    nombre VARCHAR(50)
+);
+
+alumno tiene un curso: MODIFICAR TABLA CREAR UNA COLUMNA
+ALTER TABLE alumnos
+ADD curso_id INT;
+
+
+=== FOREIGN KEY
+ALTER TABLE alumnos
+ADD CONSTRAINT fk_curso
+FOREIGN KEY(curso_id)
+REFERENCES cursos(id);
+
+
+========= Borrar una FK
+ALTER TABLE alumnos
+DROP FOREIGN KEY fk_curso;
+
+
+======== JOIN básico (2 tablas)
+
+Traer alumnos con su curso:
+
+SELECT alumnos.nombre, cursos.nombre
+FROM alumnos
+JOIN cursos
+ON alumnos.curso_id = cursos.id;
+
+Resultado:
+alumno	curso
+Timo	Programación
+
+=========== LEFT JOIN
+
+Trae todos los alumnos aunque no tengan curso:
+
+SELECT *
+FROM alumnos
+LEFT JOIN cursos
+ON alumnos.curso_id = cursos.id;
+
+
+============== Dos JOIN
+
+Ejemplo:
+Tablas:
+alumnos
+cursos
+profesores
+
+=== SELECT 
+alumnos.nombre,
+cursos.nombre,
+profesores.nombre
+FROM alumnos
+
+JOIN cursos
+ON alumnos.curso_id = cursos.id
+
+JOIN profesores
+ON cursos.profesor_id = profesores.id;
+
+========= Contar registros
+SELECT COUNT(*)
+FROM alumnos;
+
+
+========== Buscar con varias condiciones
+SELECT *
+FROM alumnos
+WHERE edad > 18
+AND dni = 123;
+
+(o OR)
+
+=========================================================
+
+Consulta Basica SQL:
+SELECT * FROM alumno
+
+JQPL: SELECT a FROM Alumno a
+
+
+---- buscar por id SQL:
+SELECT * FROM alumnos WHERE id = 1;
+
+JPQL: SELECT a FROM Alumno a WHERE a.id = :id
+query.setParameter("id", 1);
+
+
+---- buscar por nombre LIKE
+SQL: SELECT * FROM alumnos WHERE nombre LIKE '%tim%'
+
+JPQL: SELECT a FROM Alumno a WHERE a.nombre LIKE :nombre
+setParameter("nombre", "%tim%");
+
+
+-------- JOIN -------
+En SQL hacías:
+FROM alumnos JOIN cursos ON alumnos.curso_id = cursos.id
+Porque las tablas están separadas.
+
+Pero en java tenemos Alumno -> curso
+La relación ya existe en la entidad
+
+--- @ManyToOne   //Muchos alumnos pertenecen a un curso
+private Curso curso;
+
+Entonces JPQL:
+SELECT a FROM Alumno a JOIN a.curso c
+-- No hay ON, por que?
+porque Java ya sabe: Alumno.curso -> Curso.
+
+----------
+JOIN alias.relacion nuevoAlias
+----------
+
+-----------
+JOIN a.curso c
+
+Se lee: "Desde alumno, unime con su curso"
+----------
+
+
+
+------JOIN de 2 relaciones
+
+Ejemplo: Curso tiene profesor:
+
+Curso
+ |
+ |-- profesor
+
+JPQL:
+SELECT a
+FROM Alumno a
+JOIN a.curso c
+JOIN c.profesor p
+WHERE p.nombre = :nombre
+
+DAO:
+public List<Alumno> buscarPorProfesor(String nombre){
+
+    EntityManager em = getEntityManager();
+
+    return em.createQuery(
+        "SELECT a FROM Alumno a " +
+        "JOIN a.curso c " +
+        "JOIN c.profesor p " +
+        "WHERE p.nombre = :nombre",
+        Alumno.class
+    )
+    .setParameter("nombre", nombre)
+    .getResultList();
+}
+
+
+------- JOIN con ManyToOne
+
+Tenemos:Alumno:
+
+@ManyToOne
+private Curso curso;
+
+Queremos: "alumnos del curso Java"
+
+JPQL: 
+SELECT a
+FROM Alumno a
+JOIN a.curso c
+WHERE c.nombre = :nombre
+
+DAO:
+public List<Alumno> buscarPorCurso(String nombreCurso){
+
+    EntityManager em = getEntityManager();
+
+    return em.createQuery(
+        "SELECT a FROM Alumno a " +
+        "JOIN a.curso c " +
+        "WHERE c.nombre = :nombre",
+        Alumno.class
+    )
+    .setParameter("nombre", nombreCurso)
+    .getResultList();
+}
+
+
+
+USAMOS JOIN CUANDO HAY UNA COLECCION; UNA LISTA
+
+Si navegás a un objeto único (@ManyToOne, @OneToOne) normalmente NO necesitás JOIN.
+Si navegás a una colección/lista (@OneToMany, @ManyToMany) normalmente sí usás JOIN.
+
+
+-------
+Caso 1: ManyToOne → NO JOIN
+
+Tu caso:
+
+LibroPrestamo
+      |
+      v
+Prestamo
+      |
+      v
+Socio
+
+
+Cada LibroPrestamo tiene un préstamo: private Prestamo prestamosId;
+Cada préstamo tiene un socio: private Socio socio;
+
+Entonces: SELECT lp
+FROM LibroPrestamo lp
+WHERE lp.prestamosId.socio.dni = :dni
+
+
+DAO:
+public List<LibroPrestamo> buscarPorDniSocio(String dni){
+
+    String jpql =
+    "SELECT lp FROM LibroPrestamo lp "
+    + "WHERE lp.prestamosId.socio.dni = :dni";
+
+
+    return em.createQuery(jpql, LibroPrestamo.class)
+            .setParameter("dni", dni)
+            .getResultList();
+}
+
+
+--------
+Caso 2: ManyToMany → JOIN
+
+Tu libro:
+Libro
+private List<Autor> autores;
+
+Un libro tiene muchos autores.
+
+Entonces: SELECT l
+FROM Libro l
+JOIN l.autores a
+WHERE a.nombre = :nombre
+(necesitamos entar a la lista)
+
+========== DAO:
+public List<Libro> buscarPorAutor(String nombre){
+
+    String jpql =
+    "SELECT l FROM Libro l "
+    + "JOIN l.autores a "
+    + "WHERE LOWER(a.nombre) LIKE LOWER(:nombre)";
+
+
+    return em.createQuery(jpql, Libro.class)
+            .setParameter("nombre", "%" + nombre + "%")
+            .getResultList();
+}
+
+---------
+Caso 3: OneToMany → JOIN
+
+Ejemplo:
+Socio
+private List<Prestamo> prestamos;
+
+Un socio tiene muchos préstamos.
+Si querés: "todos los socios que tienen préstamos activos"
+
+SELECT s
+FROM Socio s
+JOIN s.prestamos p
+WHERE p.fechaDevolucion IS NULL
+(porque prestamos es una lista)
+
+
+============ DAO
+public List<Socio> buscarSociosConPrestamosActivos(){
+
+    String jpql =
+    "SELECT s FROM Socio s "
+    + "JOIN s.prestamos p "
+    + "WHERE p.fechaDevolucion IS NULL";
+
+
+    return em.createQuery(jpql, Socio.class)
+            .getResultList();
+}
+
+
+

@@ -1,0 +1,184 @@
+=========  1. Buscar libros por autor
+Libro:
+Collection<Autor> autores;
+
+Consulta:
+public List<Libro> buscarPorAutor(String nombre){
+
+    String jpql =
+    "SELECT l FROM Libro l JOIN l.autores a "
+    + "WHERE LOWER(a.nombre) LIKE LOWER(:nombre)";
+
+
+    return em.createQuery(jpql, Libro.class)
+            .setParameter("nombre","%" + nombre + "%")
+            .getResultList();
+}
+
+
+=========  1.1 Buscar AUTORES DE UN LIBRO
+public List<Autor> buscarAutoresDeLibro(String titulo){
+
+    String jpql =
+    "SELECT a FROM Libro l "
+    + "JOIN l.autores a "
+    + "WHERE l.titulo = :titulo";
+
+
+    return em.createQuery(jpql, Autor.class)
+            .setParameter("titulo", titulo)
+            .getResultList();
+}
+
+
+=========  2. Buscar socio por DNI
+public Socio buscarPorDni(String dni){
+
+    String jpql = "SELECT s FROM Socio s WHERE s.dni = :dni";
+
+    List<Socio> lista = em.createQuery(jpql, Socio.class)
+            .setParameter("dni", dni)
+            .getResultList();
+
+    Socio socio = null;
+
+    if(!lista.isEmpty()){
+        socio = lista.get(0);
+    }
+
+    return socio;
+}
+
+
+=========  3. Buscar libros por título 
+public List<Libro> buscarPorTitulo(String titulo) {
+
+    String jpql = "SELECT l FROM Libro l WHERE LOWER(l.titulo) LIKE LOWER(:titulo)";
+
+    return em.createQuery(jpql, Libro.class)
+            .setParameter("titulo", "%" + titulo + "%")
+            .getResultList();
+}
+
+
+=========  3.1 Libros por código
+public Libro buscarPorCodigo(String codigo) {
+
+    String jpql = "SELECT l FROM Libro l WHERE l.codigo = :codigo";
+
+    List<Libro> lista = em.createQuery(jpql, Libro.class)
+            .setParameter("codigo", codigo)
+            .getResultList();
+
+    Libro libro = null;
+
+    if(!lista.isEmpty()){
+        libro = lista.get(0);
+    }
+
+    return libro;
+}
+
+
+=========  4.Socios ordenados por apellido
+SELECT s
+FROM Socio s
+ORDER BY s.apellido
+
+=========  5. Libros ordenados por titulo
+public List<Libro> ordenarLibros(){
+
+    String jpql =
+    "SELECT l FROM Libro l ORDER BY l.titulo ASC";
+
+
+    return em.createQuery(jpql,Libro.class)
+            .getResultList();
+}
+
+========= 6.Buscar préstamos de un socio
+public List<Prestamo> buscarPorSocio(Long idSocio){
+
+    String jpql =
+    "SELECT p FROM Prestamo p "
+    + "WHERE p.socio.id = :id";
+
+
+    return em.createQuery(jpql, Prestamo.class)
+            .setParameter("id", idSocio)
+            .getResultList();
+}
+
+=========  6.1 Listar préstamos activos
+Prestamo: fechaDevolucion
+
+Consulta:
+public List<Prestamo> prestamosActivos(){
+
+    String jpql =
+    "SELECT p FROM Prestamo p "
+    + "WHERE p.fechaDevolucion IS NULL";
+
+
+    return em.createQuery(jpql, Prestamo.class)
+            .getResultList();
+}
+
+
+=========  6.2 Buscar préstamos vencidos
+public List<Prestamo> prestamosVencidos(){
+
+    String jpql =
+    "SELECT p FROM Prestamo p "
+    + "WHERE p.fechaDevolucion IS NULL "
+    + "AND p.fechaLimite < CURRENT_DATE";
+
+
+    return em.createQuery(jpql, Prestamo.class)
+            .getResultList();
+}
+
+
+
+=========  7. Contar libros 
+public Long cantidadLibros(){
+
+    String jpql =
+    "SELECT COUNT(l) FROM Libro l";
+
+
+    return em.createQuery(jpql,Long.class)
+            .getSingleResult();
+}
+
+
+========= 8.Libros nunca prestados (más difícil)
+public List<Libro> nuncaPrestados(){
+
+String jpql =
+"SELECT l FROM Libro l "
++"WHERE l NOT IN "
++"(SELECT p.libro FROM Prestamo p)";
+
+
+return em.createQuery(jpql,Libro.class)
+.getResultList();
+
+}
+
+
+
+=========  9. BUSCAR SOCIO POR DNI O NOMBRE AL MISMO TIEMPO
+public List<LibroPrestamo> buscarPorSocio(String dato){
+
+    String jpql =
+    "SELECT lp FROM LibroPrestamo lp "
+    + "WHERE lp.prestamosId.socio.dni LIKE :dato "
+    + "OR LOWER(lp.prestamosId.socio.nombres) LIKE LOWER(:dato)";
+
+
+    return em.createQuery(jpql, LibroPrestamo.class)
+            .setParameter("dato", "%" + dato + "%")
+            .getResultList();
+}
+

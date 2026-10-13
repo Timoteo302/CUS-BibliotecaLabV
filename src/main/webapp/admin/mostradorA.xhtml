@@ -1,0 +1,94 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="jakarta.faces.facelets"
+                template="./../layouts/layoutAdmin.xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:f="jakarta.faces.core">
+
+    <ui:define name="contenido">
+
+        <h2>Mostrador</h2>
+
+        <h:form>
+
+            <h:panelGrid columns="2">
+
+                <h:outputLabel value="DNI:"/>
+
+                <h:inputText
+                    value="#{mostradorBean.dniBusqueda}"/>
+
+            </h:panelGrid>
+
+            <br/>
+
+            <h:commandButton
+                value="Buscar socio"
+                action="#{mostradorBean.buscarSocio}"/>
+
+            <br/>
+            <br/>
+
+            <h:messages styleClass="mensajes" errorClass="error"
+                        infoClass="info"/>
+
+            <h:panelGroup rendered="#{mostradorBean.socioEncontrado != null}">
+
+                <table class="tabla-datos">
+
+                    <tr>
+                        <th>Nombre</th>
+                        <td>#{mostradorBean.socioEncontrado.nombres}</td>
+                    </tr>
+
+                    <tr>
+                        <th>Apellido</th>
+                        <td>#{mostradorBean.socioEncontrado.apellido}</td>
+                    </tr>
+
+                    <tr>
+                        <th>DNI</th>
+                        <td>#{mostradorBean.socioEncontrado.dni}</td>
+                    </tr>
+
+                    <tr>
+                        <th>Teléfono</th>
+                        <td>#{mostradorBean.socioEncontrado.telefono}</td>
+                    </tr>
+
+                </table>
+
+            </h:panelGroup>
+
+            <h:panelGroup rendered="#{mostradorBean.solicitudEncontrada != null}">
+
+                <h3>Libros solicitados</h3>
+
+                <h:dataTable
+                    value="#{mostradorBean.librosSolicitados}"
+                    var="sl"
+                    styleClass="tabla">
+
+                    <h:column>
+                        <f:facet name="header">
+                            Título
+                        </f:facet>
+
+                        #{sl.libro.titulo}
+                    </h:column>
+
+                </h:dataTable>
+
+            </h:panelGroup>
+
+            <h:commandButton
+                value="Confirmar préstamo"
+                action="#{mostradorBean.confirmarPrestamo}"/>
+
+        </h:form>
+
+
+    </ui:define>
+
+</ui:composition>

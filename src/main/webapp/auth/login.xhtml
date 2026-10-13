@@ -1,0 +1,63 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="jakarta.faces.facelets"
+                template="./../layouts/layoutLogin.xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:f="jakarta.faces.core">
+
+    <ui:define name="contenido">
+
+        <div class="form-card">
+            <h2>
+                <i class="fa-solid fa-book-open"></i>
+                Biblioteca Virtual
+            </h2>
+
+            <p class="subtitulo-form">
+                Ingrese sus credenciales para acceder al sistema.
+            </p>
+
+
+            <h:form>
+
+                <h:messages id="mensajes" styleClass="mensajes" errorClass="error"
+                            infoClass="info"/>
+
+                <h:outputLabel for="usuario" value="Usuario:"/>
+                <h:inputText id="usuario"
+                             value="#{usuarioBean.usuarioLogin}"
+                             required="true"
+                             requiredMessage="Debe ingresar el usuario"/>
+
+
+                <h:outputLabel for="password" value="Contraseña:"/>
+                <h:inputSecret id="password"
+                               value="#{usuarioBean.passwordLogin}"
+                               required="true"
+                               requiredMessage="Debe ingresar la contraseña"/>
+
+
+                <h:commandButton value="Iniciar sesion"
+                                 action="#{usuarioBean.login}">
+
+
+
+                </h:commandButton>
+
+
+            </h:form>
+
+            <h:link value="¿No tienes cuenta? Crear cuenta"
+                    outcome="registroUsuario"/>
+
+            <h:link
+                value="Continuar como invitado"
+                outcome="/index"
+                styleClass="enlace botonTransparente2"/>
+
+        </div>
+
+    </ui:define>
+
+</ui:composition>

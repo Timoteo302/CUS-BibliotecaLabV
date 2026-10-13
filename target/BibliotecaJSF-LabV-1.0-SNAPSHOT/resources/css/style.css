@@ -1,0 +1,948 @@
+
+/* BASE */
+
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+
+body {
+    font-family: Arial, sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background: #f3f4f6;
+}
+
+/*---- ESTILOS LOGIN ------*/
+.contenido-login {
+
+    flex: 1;
+
+    display: flex;
+    justify-content: center; /* centro horizontal */
+    align-items: center;     /* centro vertical */
+
+
+}
+
+h2{
+    margin-bottom:20px;
+}
+
+.subtitulo-form{
+    color:#6b7280;
+    margin-bottom:20px;
+    font-size:16px;
+}
+
+.form-card h2{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    color:#1e3a8a;
+    margin-bottom:10px;
+}
+
+.form-card h2 i{
+    font-size:24px;
+}
+
+/*-----------ESTILOS GENERALES ---------*/
+/* INPUTS GENERALES */
+
+input,
+textarea,
+select{
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    outline: none;
+
+}
+
+input:focus,
+textarea:focus,
+select:focus{
+
+    border-color:#2563eb;
+    box-shadow:0 0 5px rgba(37,99,235,0.3);
+}
+
+textarea{
+    resize: none;
+}
+
+/* LINKS GENERALES */
+a {
+    color: #2563eb;
+    text-decoration: none;
+}
+
+a:hover {
+    opacity: 0.8;
+}
+
+
+/* BOTONES GENERALES */
+input[type="submit"],
+button {
+
+    display: inline-block;
+    padding: 8px 14px;
+    margin: 2px;
+    border-radius: 8px;
+    background-color: #2563eb;
+    color: white;
+    border: none;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.2s;
+
+}
+
+input[type="submit"]:hover,
+button:hover {
+
+    background-color: #1d4ed8;
+
+}
+
+/* BOTONES DE CATEGORIA ESTILADOS */
+input[type="submit"].boton-categoria {
+    background-color: #111827;
+    display: block;
+    width:100%;
+    margin:6px 0;
+}
+
+input[type="submit"].limpiar {
+    margin-top: 15px;
+    background-color: #008026;
+}
+
+input[type="submit"].categoria-activa{
+    background-color:#bb6800 !important;
+    transform:scale(1.03);
+    border: 3px solid #595858;
+}
+
+
+main {
+    flex: 1;
+}
+
+
+/* ESTILOS PARA EL DETALLE DE CADA LIBRO */
+.detalle-libro {
+    display: flex;
+    gap: 30px;
+    align-items: flex-start;
+}
+
+
+.imagen-detalle{
+    width: 300px;
+    height: auto;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.imagen-card{
+    width:100%;
+    height:300px;
+    object-fit:cover;
+    border-radius:8px;
+}
+
+.detalle-libro div {
+    flex: 1;
+}
+
+.detalle-libro p{
+    margin: 10px 0;
+}
+
+
+/* LAYOUT PRINCIPAL (MAIN + ASIDE) */
+.contenedor {
+    flex: 1;
+    display: flex;
+    gap: 25px;
+    padding: 25px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+
+/* CONTENIDO PRINCIPAL */
+.contenedor section {
+    flex: 3;
+    background: transparent;
+}
+
+
+/* ASIDE */
+.contenedor aside {
+    flex: 1;
+    min-width: 250px;
+}
+
+
+
+/* HEADER GENERAL */
+.header {
+    background-color: #1e3a8a;
+    color: white;
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    position: relative;
+}
+
+.header-right{
+    display:flex;
+    align-items:center;
+    gap:20px;
+}
+
+
+.header-left{
+    display:flex;
+    flex-direction:column;
+}
+
+/* ====================ESTILOS DEL CARRITO POPUOT */
+.carrito-popup{
+    position:absolute;
+    right:20px;
+    top:80px;
+    background:white;
+    color:black;
+    width:250px;
+    padding:15px;
+    border-radius:10px;
+    box-shadow:0 5px 15px #0003;
+    z-index:1000;
+}
+
+.info-carrito{
+    border-bottom: 1px solid #3b3b3f;
+    border-top: 1px solid #3b3b3f;
+    margin: 3px 0px;
+    padding: 3px 0px;
+}
+
+.info-libro{
+    border-bottom: 1px solid #ddd;
+    margin: 3px 0px;
+    padding: 3px 0px;
+}
+
+/*ESTILOS DEL CARRITO TITULO*/
+.titulo-carrito{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.btn-cerrar{
+    color:#555;
+    text-decoration:none;
+    font-size:18px;
+}
+
+.btn-cerrar:hover{
+    color:red;
+}
+
+
+/*ESTILOS DE LA INFO DENTRO DEL CARRITO*/
+.info-libro{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+
+    border-bottom:1px solid #ddd;
+    padding:6px 0;
+}
+
+.btn-eliminar{
+    color:#777;
+    text-decoration:none;
+}
+
+.btn-eliminar:hover{
+    color:red;
+}
+
+
+/* MENSAJE DEBAJO DEL CARRITO SI NO SOS SOCIO */
+.popOutSerSocio{
+    margin-top: 10px;
+    border: 3px solid #ddd;
+    border-radius: 8px;
+    padding: 4px;
+}
+
+.mensaje-socio{
+    color: #c0392b;
+    font-size: 16px;
+    margin-bottom: 5px;
+}
+
+
+
+/*BOTON DE AGREGAR LIBRO AL CARRITO*/
+.boton-agregar{
+    background:#111827;
+    width:100%;
+}
+
+
+.boton-agregado{
+    background:#065f46 !important;
+    width:100%;
+    cursor:default;
+}
+
+
+/* boton cerrar sesion del header */
+.cerrar {
+    padding: 8px 14px;
+    margin: 5px;
+    border-radius: 8px;
+    background-color: #eeeeee;
+    border: none;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.enlace {
+    padding: 8px 14px;
+    margin: 5px;
+    border-radius: 8px;
+    border: none;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.boton1claro{
+    background-color: #eeeeee;
+    color: #2563eb;
+}
+
+.boton2oscuro{
+    background-color: #111827;
+    color: white;
+}
+
+.botonTransparente{
+    background-color: transparent;
+    border: 2px solid #2563eb;
+    color: white;
+}
+
+.botonTransparente2{
+    background-color: transparent;
+    border: 2px solid #2563eb;
+    color: #3b3b3f;
+}
+
+
+
+
+/* TITULO */
+.titulo {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+
+
+/* NAV */
+.nav {
+    margin-top: 10px;
+    display: flex;
+    gap: 20px;
+}
+
+
+/* NAV */
+.nav a {
+    color: white;
+    text-decoration: none;
+    font-weight: 500;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+    display: inline-block;
+}
+
+
+/* hover: agranda */
+.nav a:hover {
+    transform: scale(1.15);
+    opacity: 0.9;
+}
+/* FIN de NAV y HEADER*/
+
+
+
+/* TARJETAS */
+
+/* CONTENEDOR DE CARDS */
+.cards {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+
+}
+
+
+/* BLOQUE DE INFORMACION INDEX */
+
+.info-index{
+    margin-top:30px;
+    display:flex;
+    gap:20px;
+}
+
+
+.info-card{
+
+    background:white;
+    padding:20px;
+    border-radius:12px;
+
+    flex:1;
+
+    display:flex;
+    gap:15px;
+    align-items:center;
+
+    box-shadow:0 3px 10px rgba(0,0,0,0.1);
+
+}
+
+
+.info-card i{
+
+    font-size:30px;
+    color:#2563eb;
+
+}
+
+
+.info-card h3{
+
+    margin-bottom:8px;
+
+}
+
+
+.info-card p{
+
+    color:#555;
+
+}
+
+
+/* TARJETA LIBRO */
+.card {
+    width: 220px;
+    min-height: 300px;
+    border-radius: 12px;
+    padding: 15px;
+    background: #fff;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    transition: 0.3s;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+}
+
+
+
+
+
+/* ASIDE */
+
+.aside-box {
+
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 15px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.aside-box h3{
+    margin-bottom:5px;
+    border-bottom:1px solid #ddd;
+    padding-bottom:8px;
+}
+
+.estilo-li li{
+    margin-left: 10px;
+}
+
+
+/* === ASIDE DE INDEX */
+.redes{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+}
+
+.redes a{
+    text-decoration:none;
+    color:#333;
+    font-size:16px;
+}
+
+.redes i{
+    width:25px;
+}
+
+.aside-title {
+
+    font-weight: bold;
+    margin-bottom: 10px;
+
+}
+
+/* === ASIDE DE LIBROS*/
+.input-busqueda{
+    box-sizing:border-box;
+    margin-bottom:10px;
+    margin-right: 10px;
+}
+
+
+
+/*estilo de la tabla de libros del admin*/
+.titulo-tabla{
+    margin: 20px 0px;
+}
+
+
+
+/* TABLA */
+
+/*table {
+
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border-radius: 10px;
+    overflow: hidden;
+
+}
+
+
+th {
+
+    background: #e5e7eb;
+    padding: 10px;
+    text-align: left;
+
+}
+
+
+td {
+
+    padding: 10px;
+    border-top: 1px solid #ddd;
+
+}
+*/
+
+/* tablas admin */
+.tabla,
+.tabla-datos {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 10px 0px;
+}
+
+.tabla th,
+.tabla td,
+.tabla-datos th,
+.tabla-datos td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: left;
+}
+
+.tabla th,
+.tabla-datos th {
+    background-color: #f5f5f5;
+    font-weight: bold;
+}
+
+.tabla-datos{
+    width: auto;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+
+/* ---------------------FOOTER---------------------- */
+
+
+/* FOOTER LAYOUT */
+
+.footer {
+
+    display: flex;
+    justify-content: space-between;
+    gap: 40px;
+    background: #111827;
+    color: white;
+    padding: 25px;
+
+}
+
+
+
+/* INFO IZQUIERDA */
+
+.footer-info {
+    flex: 1;
+}
+
+
+
+
+
+/*-------------------- FORMULARIO DERECHA */
+
+.footer-form {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+}
+
+
+
+
+.texto-leermas{
+
+    display: none;
+
+}
+
+.boton-leermas{
+
+    color:#1d4ed8;
+    font-weight: bold;
+    padding: 10px;
+
+}
+
+
+
+/*--------- Ejercicio 4, Mensaje de error -----------*/
+
+
+.error{
+    color: red;
+    font-size: 14px;
+}
+
+
+
+
+
+/*--------- ESTILOS FORM GENERAL -----------*/
+.faq{
+    margin: 10px 0px;
+}
+
+.form-card, .faq{
+    background:white;
+    padding:25px;
+    border-radius:12px;
+    box-shadow:0 4px 10px rgba(0,0,0,0.1);
+
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+}
+
+.form-card form{
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+}
+
+.form-card input,
+.form-card textarea{
+    padding:10px;
+    border-radius:8px;
+    border:1px solid #ddd;
+    outline:none;
+}
+
+
+.form-card input:focus,
+.form-card textarea:focus{
+    border-color:#2563eb;
+}
+
+
+.form-card textarea{
+    resize:none;
+    min-height:120px;
+}
+
+
+/*--------- Estilos "x" -----------*/
+
+.eliminar {
+    background:red;
+    color:white;
+    border:none;
+    padding:4px 8px;
+    border-radius:50%;
+    cursor:pointer;
+    float:right;
+
+}
+
+
+
+
+/*--------- MENSAJES DE ERROR -----------*/
+.mensajes {
+    display: block;
+    font-size: 18px;
+    margin-bottom: 10px;
+    padding: 5px 0px;
+}
+
+/* texto de todos los mensajes */
+.mensajes li {
+    list-style: none;
+    font-size: 16px !important;
+    padding: 8px 12px;
+    border-radius: 6px;
+    margin-bottom: 8px;
+    width: fit-content;
+}
+
+/* error */
+.error {
+    background-color: #e74c3c;
+    color: white !important;
+}
+
+/* correcto */
+.info {
+    background-color: #27ae60;
+    color: white !important;
+}
+
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+
+/* TABLET */
+@media (max-width: 900px) {
+
+
+    /* MAIN + ASIDE */
+
+    .contenedor {
+
+        flex-direction: column;
+
+    }
+
+
+    .contenedor section,
+    .contenedor aside {
+
+        width: 100%;
+        min-width: 0;
+
+    }
+
+
+
+
+    /* HEADER */
+
+    .nav {
+
+        flex-wrap: wrap;
+
+    }
+
+
+
+
+
+    /* CARDS */
+
+    .cards {
+
+        justify-content: center;
+
+    }
+
+
+
+    .card {
+
+        width: 200px;
+
+    }
+
+
+
+    /* FOOTER */
+
+    .footer {
+
+        flex-direction: column;
+
+    }
+
+
+    /* ESTILOS DETALLE LIBRO */
+    .detalle-libro {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .detalle-libro .imagen-libro {
+        width: 220px;
+    }
+
+
+
+}
+
+
+
+
+
+
+/* CELULAR */
+@media (max-width: 600px) {
+
+    /* HEADER */
+
+    .header {
+
+        text-align: center;
+
+    }
+
+
+    .nav {
+
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+
+    }
+
+
+
+
+    /* CONTENIDO */
+
+    .contenedor {
+
+        padding: 15px;
+
+        gap: 15px;
+
+    }
+
+
+
+
+
+    /* CARDS */
+
+    .cards {
+
+        flex-direction: column;
+        align-items: center;
+
+    }
+
+
+
+    .card {
+
+        width: 100%;
+        max-width: 300px;
+
+    }
+
+
+
+
+    /* IMAGENES */
+
+    .card img {
+
+        height: 250px;
+
+    }
+
+
+
+
+
+    /* FOOTER */
+
+    .footer {
+
+        padding: 15px;
+
+    }
+
+
+
+
+    /* FORMULARIOS */
+
+    input,
+    textarea,
+    input[type="submit"] {
+
+        width: 100%;
+
+    }
+
+
+    /* ESTILOS DETALLE LIBRO */
+    .detalle-libro {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .detalle-libro .imagen-libro {
+        width: 220px;
+    }
+
+}

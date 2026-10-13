@@ -1,0 +1,72 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="jakarta.faces.facelets"
+                template="./../layouts/layoutP.xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:f="jakarta.faces.core">
+
+    <ui:define name="contenido">
+
+        <div class="form-card">
+            <h2>Registro como socio</h2>
+
+            <h:messages id="mensajes" styleClass="mensajes" errorClass="error"
+                        infoClass="info"/>
+
+            <h:panelGroup id="formulario">
+
+                <h:form>
+
+
+                    <h:outputLabel value="Nombre:"/>
+                    <h:inputText value="#{socioBean.socio.nombres}"
+                                 required="true"
+                                 requiredMessage="Debe ingresar el nombre"/>
+
+
+                    <h:outputLabel value="Apellido:"/>
+                    <h:inputText value="#{socioBean.socio.apellido}"
+                                 required="true"
+                                 requiredMessage="Debe ingresar el apellido"/>
+
+
+                    <h:outputLabel value="DNI:"/>
+                    <h:inputText value="#{socioBean.socio.dni}"
+                                 required="true"
+                                 requiredMessage="Debe ingresar el DNI"/>
+
+
+                    <h:outputLabel value="Direccion:"/>
+                    <h:inputText value="#{socioBean.socio.direccion}"
+                                 requiredMessage="Debe ingresar la direccion"/>
+
+
+                    <h:outputLabel value="Telefono:"/>
+                    <h:inputText value="#{socioBean.socio.telefono}"
+                                 requiredMessage="Debe ingresar el telefono"/>
+
+
+                    <h:commandButton value="Registrarme" action="#{socioBean.registrar}">
+                        <f:ajax execute="@form"
+                                render="formulario mensajes"/>
+                    </h:commandButton>
+
+                </h:form>
+
+            </h:panelGroup>
+        </div>
+
+    </ui:define>
+
+
+    <ui:define name="aside">
+        <div class="aside-box">
+            <h3>Ventajasd de ser socio</h3>
+            <p>Solicitudes de libros</p>
+            <p>Exclusividad de libros</p>
+        </div>
+
+    </ui:define>
+
+</ui:composition>

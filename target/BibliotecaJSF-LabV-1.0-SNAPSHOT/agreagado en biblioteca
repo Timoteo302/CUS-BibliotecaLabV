@@ -1,0 +1,307 @@
+1.PARA QUE EN SOCIOS SELECCIONEMOS USUARIOS EXISTENTES 
+- 1.1 En SocioAdminBean
+@Inject
+private UsuarioServicio usuarioServicio;
+
+private List<Usuario> usuarios;
+
+private Usuario usuarioSeleccionado;
+
+1.2
+@PostConstruct
+public void init() {
+
+    socio = new Socio();
+    cargar();
+    usuarios = usuarioServicio.listarSinSocio();
+
+}
+
+1.3
+public void guardar() {
+
+    try {
+
+        if (socio.getId() == null) {
+
+            socioServicio.guardar(socio);
+
+            if(usuarioSeleccionado != null){
+
+                usuarioSeleccionado.setSocio(socio);
+                usuarioServicio.actualizar(usuarioSeleccionado);
+
+            }
+
+        } else {
+
+            socioServicio.actualizar(socio);
+
+        }
+
+
+        socio = new Socio();
+        usuarioSeleccionado = null;
+        cargar();
+
+        FacesContext.getCurrentInstance()
+                .addMessage(null,
+                        new FacesMessage(
+                                "Operación realizada correctamente"));
+
+    } catch (ValidacionException e) {
+
+        FacesContext.getCurrentInstance()
+                .addMessage(null,
+                        new FacesMessage(
+                                FacesMessage.SEVERITY_ERROR,
+                                e.getMessage(),
+                                null));
+
+    }
+
+}
+
+1.4 getters y setters
+
+
+1.5 DAO
+// listar usuarios que todavía no tienen socio
+    public List<Usuario> listarSinSocio() {
+
+        return em.createQuery(
+                "SELECT u FROM Usuario u WHERE u.socio IS NULL AND u.rol <> 'ADMIN'",
+                Usuario.class)
+                .getResultList();
+    }
+
+1.6 USUARIO SERVICIO
+public List<Usuario> listarSinSocio() {
+        return usuarioDAO.listarSinSocio();
+    }
+
+
+
+
+2. AGREGAR PARA SELECCIONAR 2 AUTORES EN LIBROS
+
+2.1 CREAR TABLA INTERMEDIA
+--- Primero sacar la relación vieja de libros:
+ALTER TABLE libros DROP FOREIGN KEY fk_libros_autores1;
+ALTER TABLE libros DROP COLUMN autores_id;
+
+--- Crear tabla nueva
+CREATE TABLE libros_autores (
+    libros_id INT NOT NULL,
+    autores_id INT NOT NULL,
+
+    PRIMARY KEY(libros_id, autores_id),
+
+    FOREIGN KEY(libros_id) REFERENCES libros(id),
+    FOREIGN KEY(autores_id) REFERENCES autores(id)
+);
+
+2.2 CAMBIAR LIBRO.JAVA
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.JoinColumn;
+import java.util.List;
+import java.util.ArrayList;
+
+ ---- Cambiar esto:
+@JoinColumn(name = "autores_id", referencedColumnName = "id")
+@ManyToOne(optional = false)
+private Autor autor;
+
+--- Por esto:
+@ManyToMany(cascade = CascadeType.MERGE)
+@JoinTable(
+    name = "libros_autores",
+    joinColumns = @JoinColumn(name = "libros_id"),
+    inverseJoinColumns = @JoinColumn(name = "autores_id")
+)
+private List<Autor> autores = new ArrayList<>();
+
+----- Cambiar getters/setters
+Eliminar:
+public Autor getAutor()
+public void setAutor()
+
+
+Poner:
+public List<Autor> getAutores() {
+    return autores;
+}
+
+public void setAutores(List<Autor> autores) {
+    this.autores = autores;
+}
+
+2.3 CAMBIAR AUTOR.JAVA
+--- Buscar la relación que tenga con Libro.
+Si está algo como:
+@OneToMany(mappedBy="autor")
+
+--- cambiar por:
+@ManyToMany(mappedBy = "autores")
+private Collection<Libro> librosCollection;
+
+
+porque ahora un libro tiene varios autores.
+
+2.4 EN EL BEAN de LibroAdminBean.java
+--- agregar variable:
+private List<Autor> autoresSeleccionados = new ArrayList<>();
+
+
+----- getter y setters:
+public List<Autor> getAutoresSeleccionados() {
+    return autoresSeleccionados;
+}
+
+public void setAutoresSeleccionados(List<Autor> autoresSeleccionados) {
+    this.autoresSeleccionados = autoresSeleccionados;
+}
+
+
+--- agregar el guardar()
+public void guardar() {
+        System.out.println("ENTRO A GUARDAR");
+
+        try {
+
+            if (libro.getId() == null) {
+	
+		libro.setAutores(autoresSeleccionados);
+                libroServicio.guardar(libro);
+
+            } else {
+		libro.setAutores(autoresSeleccionados);
+                libroServicio.actualizar(libro);
+
+            }
+
+            libro = new Libro();
+	    autoresSeleccionados = new ArrayList<>();
+            cargar();
+
+            FacesContext.getCurrentInstance()
+                    .addMessage(null,
+                            new FacesMessage(
+                                    "Operación realizada correctamente"));
+
+        } catch (ValidacionException e) {
+
+            FacesContext.getCurrentInstance()
+                    .addMessage(null,
+                            new FacesMessage(
+                                    FacesMessage.SEVERITY_ERROR,
+                                    e.getMessage(),
+                                    null
+                            ));
+
+        }
+    }
+
+
+------ cambiar el editar()
+
+public void editar(Libro libro) {
+
+    this.libro = libro;
+
+    this.autoresSeleccionados =
+        new ArrayList<>(libro.getAutores());
+
+}
+
+
+
+
+2.4 VALIDACION EN SERVICIO
+--- dentro de validarLibro() cambiamos esto:
+if (libro.getAutor() == null) 
+
+--- por:
+if (libro.getAutores() == null || libro.getAutores().isEmpty()) {
+
+    throw new ValidacionException(
+        "Debe seleccionar al menos un autor");
+}
+
+
+if(libro.getAutores().size() > 2){
+
+    throw new ValidacionException(
+        "Solo puede seleccionar hasta 2 autores");
+}
+
+
+
+2.5 XHTML "librosA.xhtml"
+
+-- cambiar esto:
+<h:selectOneMenu id="autores"
+ value="#{libroAdminBean.libro.autor}">
+
+-- por:
+
+<h:selectManyCheckbox
+    id="autores"
+    value="#{libroAdminBean.autoresSeleccionados}">
+
+
+<f:selectItems
+    value="#{libroAdminBean.autores}"
+    var="a"
+    itemValue="#{a}"
+    itemLabel="#{a.apellido} #{a.nombres}"/>
+<f:converter converterId="autorConverter"/>    // nose
+
+</h:selectManyCheckbox>
+
+
+2.6 TABLA DE vista librosA.xhtml
+
+--- tenemos que cambiar esto: #{l.autor.apellido}
+
+--- por esto:
+<ui:repeat value="#{l.autores}" var="a">
+
+    #{a.apellido} #{a.nombres}<br/>
+
+</ui:repeat>
+
+2.7 Cambiar .autor ===> .autores
+====   index.xhtml
+
+<ui:repeat value="#{libro.autores}" var="a">
+        #{a.nombres} #{a.apellido}<br/>
+    </ui:repeat>
+
+==== detalle.xhtml
+
+<p>
+    <strong>Autor:</strong>
+
+    <ui:repeat value="#{libroBean.libro.autores}" var="a">
+        #{a.nombres} #{a.apellido}<br/>
+    </ui:repeat>
+
+</p>
+
+==== libros.xhtml
+<p>
+    <strong>Autor:</strong>
+
+    <ui:repeat value="#{libro.autores}" var="a">
+        #{a.nombres} #{a.apellido}<br/>
+    </ui:repeat>
+
+</p>
+
+==== librosA.xhtml
+
+
+
+

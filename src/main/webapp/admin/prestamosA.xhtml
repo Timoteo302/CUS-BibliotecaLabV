@@ -1,0 +1,514 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition 
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="jakarta.faces.facelets"
+    template="./../layouts/layoutAdmin.xhtml"
+    xmlns:h="jakarta.faces.html"
+    xmlns:f="jakarta.faces.core">
+
+    <f:metadata>
+        <f:viewAction action="#{prestamoAdminBean.cargar}"/>
+    </f:metadata>
+
+    <ui:define name="contenido">
+
+
+
+
+
+        <h:form>
+
+            <!-- BUSCAR POR SOCIO -->
+            <h3>Buscar por socio</h3>
+
+
+            <h:inputText value="#{prestamoAdminBean.dniSocio}"/>
+
+            <h:commandButton 
+                value="Buscar"
+                action="#{prestamoAdminBean.buscarPorSocio}">
+
+                <f:ajax execute="@form" render="@form"/>
+
+            </h:commandButton>
+
+
+            <h:dataTable
+                value="#{prestamoAdminBean.prestamosBuscados}"
+                var="lp"
+                styleClass="tabla">
+
+
+                <h:column>
+
+                    <f:facet name="header">
+                        Socio
+                    </f:facet>
+
+                    #{lp.prestamosId.socio.nombres}
+                    #{lp.prestamosId.socio.apellido}
+
+                </h:column>
+
+
+                <h:column>
+
+                    <f:facet name="header">
+                        Libro
+                    </f:facet>
+
+                    #{lp.librosId.titulo}
+
+                </h:column>
+
+
+                <h:column>
+
+                    <f:facet name="header">
+                        Fecha
+                    </f:facet>
+
+                    <h:outputText value="#{lp.prestamosId.fecha}">
+                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                    </h:outputText>
+
+                </h:column>
+
+
+                <h:column>
+
+                    <f:facet name="header">
+                        Estado
+                    </f:facet>
+
+                    #{lp.devuelto ? 'Devuelto':'Activo'}
+
+                </h:column>
+
+
+            </h:dataTable>
+
+
+            <!-- FIN BUSCAR PRESTAMOS POR SOCIO -->
+
+            <!-- PRESTAMOS VENCIDOS -->
+            <h2>Prestamos vencidos</h2>
+
+
+            <h:commandButton
+                value="Ver vencidos"
+                action="#{prestamoAdminBean.verVencidos}">
+
+                <f:ajax execute="@this" render="@form"/>
+
+            </h:commandButton>
+
+
+
+            <h:dataTable
+                value="#{prestamoAdminBean.prestamosVencidos}"
+                var="lp"
+                styleClass="tabla">
+
+
+                <h:column>
+                    <f:facet name="header">Socio</f:facet>
+                        #{lp.prestamosId.socio.nombres}
+                </h:column>
+
+
+                <h:column>
+                    <f:facet name="header">
+                        Libro
+                    </f:facet>
+                    #{lp.librosId.titulo}
+                </h:column>
+
+
+                <h:column>
+
+                    <f:facet name="header">
+                        Vencimiento
+                    </f:facet>
+
+                    <h:outputText value="#{lp.prestamosId.fechaVencimiento}">
+                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                    </h:outputText>
+                </h:column>
+
+
+            </h:dataTable>
+
+            <!-- FIN PRESTAMOS VENCIDOS -->
+
+            <!-- LIBROS MAS PRESTADOS-->
+            <h2>Libros más prestados</h2>
+
+
+            <h:commandButton
+                value="Ver ranking"
+                action="#{prestamoAdminBean.verLibrosMasPrestados}">
+
+                <f:ajax execute="@this" render="@form"/>
+
+            </h:commandButton>
+
+
+
+            <h:dataTable
+                value="#{prestamoAdminBean.librosPopulares}"
+                var="l"
+                styleClass="tabla">
+
+
+                <h:column>
+                    <f:facet name="header">
+                        Libro
+                    </f:facet>
+                    #{l[0]}
+                </h:column>
+
+
+                <h:column>
+                    <f:facet name="header">
+                        Cantidad
+                    </f:facet>
+                    #{l[1]}
+                </h:column>
+
+
+            </h:dataTable>
+            <!-- FIN LIBROS MAS PRESTADOS -->
+
+            <!-- SOCIOS CON MAS PRESTAMOS -->
+            <h2>Socios con más préstamos</h2>
+
+
+            <h:commandButton
+                value="Ver ranking"
+                action="#{prestamoAdminBean.verRankingSocios}">
+
+
+                <f:ajax execute="@this" render="@form"/>
+
+            </h:commandButton>
+
+
+
+            <h:dataTable
+                value="#{prestamoAdminBean.rankingSocios}"
+                var="s"
+                styleClass="tabla">
+
+                <h:column>
+                    <f:facet name="header">Socio</f:facet>
+                        #{s[0]}
+                        #{s[1]}
+                </h:column>
+
+
+                <h:column>
+                    <f:facet name="header">Préstamos</f:facet>
+                        #{s[2]}
+                </h:column>
+
+
+            </h:dataTable>
+            <!-- FIN SOCIOS CON MAS PRESTAMOS -->
+
+            <!-- SOCIOS MOROSOS -->
+            <h2>Préstamos morosos</h2>
+
+
+            <h:commandButton
+                value="Ver morosos"
+                action="#{prestamoAdminBean.verMorosos}">
+
+
+                <f:ajax execute="@this" render="form-morosos"/>
+
+            </h:commandButton>
+
+
+            <h:panelGroup id="form-morosos">
+
+
+                <h:dataTable
+                    value="#{prestamoAdminBean.librosMorososPrestamo}"
+                    var="lp"
+                    styleClass="tabla">
+
+
+                    <!-- SOCIO -->
+
+                    <h:column>
+
+                        <f:facet name="header">
+                            Socio
+                        </f:facet>
+
+
+                        #{lp.prestamosId.socio.nombres}
+                        #{lp.prestamosId.socio.apellido}
+
+                    </h:column>
+
+
+                    <!-- DNI -->
+
+                    <h:column>
+
+                        <f:facet name="header">
+                            DNI
+                        </f:facet>
+
+
+                        #{lp.prestamosId.socio.dni}
+
+                    </h:column>
+
+
+
+                    <!-- LIBRO -->
+
+                    <h:column>
+
+                        <f:facet name="header">
+                            Libro
+                        </f:facet>
+
+
+                        #{lp.librosId.titulo}
+
+                    </h:column>
+
+
+
+                    <!-- FECHA PRESTAMO -->
+
+                    <h:column>
+
+                        <f:facet name="header">
+                            Fecha préstamo
+                        </f:facet>
+
+
+                        <h:outputText value="#{lp.prestamosId.fecha}">
+                            <f:convertDateTime pattern="dd/MM/yyyy"/>
+                        </h:outputText>
+
+
+                    </h:column>
+
+
+
+
+                    <!-- VENCIMIENTO -->
+
+                    <h:column>
+
+                        <f:facet name="header">
+                            Vencimiento
+                        </f:facet>
+
+
+                        <h:outputText value="#{lp.prestamosId.fechaVencimiento}">
+                            <f:convertDateTime pattern="dd/MM/yyyy"/>
+                        </h:outputText>
+
+
+                    </h:column>
+
+                    <h:column>
+
+                        <f:facet name="header">
+                            Días atraso
+                        </f:facet>
+
+
+                        #{prestamoAdminBean.calcularDiasAtraso(lp)}
+
+                    </h:column>
+
+
+                    <!-- ESTADO -->
+
+                    <h:column>
+
+                        <f:facet name="header">
+                            Estado
+                        </f:facet>
+
+
+                        MOROSO
+
+
+                    </h:column>
+
+
+
+                </h:dataTable>
+
+
+            </h:panelGroup>
+            <!-- FIN DE SOCIOS MOROSOS -->
+
+            <h2>Prestamos activos</h2>
+
+            <h:messages styleClass="mensajes" errorClass="error"
+                        infoClass="info"/>
+
+            <h:dataTable
+                value="#{prestamoAdminBean.librosActivos}"
+                var="lp"
+                styleClass="tabla">
+
+
+                <!-- SOCIO -->
+                <h:column>
+
+                    <f:facet name="header">
+                        Socio
+                    </f:facet>
+
+                    #{lp.prestamosId.socio.nombres}
+                    #{lp.prestamosId.socio.apellido}
+
+                </h:column>
+
+
+
+                <!-- LIBRO -->
+                <h:column>
+
+                    <f:facet name="header">
+                        Libro
+                    </f:facet>
+
+                    #{lp.librosId.titulo}
+
+                </h:column>
+
+
+
+
+                <!-- FECHA -->
+                <h:column>
+
+                    <f:facet name="header">
+                        Fecha
+                    </f:facet>
+
+                    <h:outputText value="#{lp.prestamosId.fecha}">
+
+                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+
+                    </h:outputText>
+
+
+                </h:column>
+
+
+
+
+                <!-- ACCION -->
+                <h:column>
+
+                    <f:facet name="header">
+                        Acción
+                    </f:facet>
+
+
+                    <h:commandButton
+                        value="Devolver"
+                        action="#{prestamoAdminBean.devolver(lp)}">
+
+                        <f:ajax execute="@this" render="@form"/>
+
+                    </h:commandButton>
+
+
+                </h:column>
+
+
+
+            </h:dataTable>
+
+
+
+
+            <h2>Historial</h2>
+
+
+            <h:dataTable 
+                value="#{prestamoAdminBean.librosFinalizados}"
+                var="lp"
+                styleClass="tabla">
+
+
+                <h:column>
+
+                    <f:facet name="header">
+                        Socio
+                    </f:facet>
+
+
+                    #{lp.prestamosId.socio.nombres}
+                    #{lp.prestamosId.socio.apellido}
+
+
+                </h:column>
+
+
+                <h:column>
+
+                    <f:facet name="header">
+                        Libro
+                    </f:facet>
+
+
+                    #{lp.librosId.titulo}
+
+
+                </h:column>
+
+
+                <h:column>
+
+                    <f:facet name="header">
+                        Fecha devolución
+                    </f:facet>
+
+                    <h:outputText value="#{lp.fechaDevolucion}">
+                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                    </h:outputText>
+
+                </h:column>
+
+
+                <h:column>
+
+                    <f:facet name="header">
+                        Multa
+                    </f:facet>
+
+
+                    $#{lp.multa}
+
+
+                </h:column>
+
+
+            </h:dataTable>
+
+
+        </h:form>
+
+
+    </ui:define>
+
+
+</ui:composition>
